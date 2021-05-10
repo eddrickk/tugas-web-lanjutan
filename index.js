@@ -57,7 +57,18 @@ app.get('/todo', function (req, res) {
             console.log(row.id)
         }
 
-        res.send(table)
+        res.json(table)
+    })
+})
+
+app.delete('/todo/:id', function(req, res){
+    const query = `DELETE FROM item WHERE id=\'${req.params.id}\'`
+    connection.query(query, (err, table) => {
+        if (err){
+            console.error(err)
+            return
+        }
+        res.send("Berhasil dihapus")
     })
 })
 
