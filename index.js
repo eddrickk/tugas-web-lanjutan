@@ -15,6 +15,8 @@ app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded())
 
+const routerUser = require('./routers/users.js')
+
 var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -71,6 +73,8 @@ app.delete('/todo/:id', function(req, res){
         res.send("Berhasil dihapus")
     })
 })
+
+app.use(routerUser)
 
 app.listen(3000, () => {
     console.log('server jalan di port 3000')
