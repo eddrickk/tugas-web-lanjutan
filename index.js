@@ -16,63 +16,9 @@ app.use(express.json())
 app.use(express.urlencoded())
 
 const routerUser = require('./routers/users.js')
+const routerTodo = require('./routers/todos.js')
 
-var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'todo_development'
-  })
-
-connection.connect()
-app.get('/', function (req, res) {
-    res.send(`
-        <html>
-            <form action="/todo" method="POST">
-                <label>Description</label>
-                <input name = "description"></input>
-                <button>Submit</button>
-            </form>
-        </html>
-    `)
-})
-
-app.post('/todo', function (req, res) {
-    console.log('Got body:', req.body)
-    connection.query(`INSERT INTO item (description) VALUES (\'${req.body.description}\')`, function (err, rows, fields) {
-        if (err) throw err
-      
-        console.log('Data insert successful')
-      })
-    
-    res.sendStatus(200)
-})
-
-app.get('/todo', function (req, res) {
-    const query = 'SELECT * FROM item'
-    connection.query(query, (err, table) => {
-        if (err){
-            console.error(err)
-            return
-        }
-        for (let row of table){
-            console.log(row.id)
-        }
-
-        res.json(table)
-    })
-})
-
-app.delete('/todo/:id', function(req, res){
-    const query = `DELETE FROM item WHERE id=\'${req.params.id}\'`
-    connection.query(query, (err, table) => {
-        if (err){
-            console.error(err)
-            return
-        }
-        res.send("Berhasil dihapus")
-    })
-})
+app.use(routerTodo)
 
 app.use(routerUser)
 
