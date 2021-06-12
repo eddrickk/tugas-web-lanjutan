@@ -1,6 +1,7 @@
 const express = require('express')
 var mysql = require('mysql')
 const router = express.Router()
+const auth = require('../middleware/auth.js')
 
 router.use(express.json())
 router.use(express.urlencoded())
@@ -14,7 +15,21 @@ var connection = mysql.createConnection({
 
 connection.connect()
 
-router.get('/user', function (req, res) {
+router.get('/', (req, res, next) => {
+    const query = `SELECT * FROM users`
+    connection.query(query, (err, table) => {
+        if (err){
+            console.error(err)
+            return
+        }
+        if (table.length > 0){
+            auth(req, res, next)
+        }
+        else{
+            next()
+        }
+    })
+}, function (req, res) {
     res.send(`
         <html>
             <form action="/user" method="POST">
@@ -28,7 +43,21 @@ router.get('/user', function (req, res) {
     `)
 })
 
-router.post('/user', function (req, res) {
+router.post('/', (req, res, next) => {
+    const query = `SELECT * FROM users`
+    connection.query(query, (err, table) => {
+        if (err){
+            console.error(err)
+            return
+        }
+        if (table.length > 0){
+            auth(req, res, next)
+        }
+        else{
+            next()
+        }
+    })
+}, (req, res) => {
     console.log('Got body:', req.body)
     connection.query(`INSERT INTO users (username, password) VALUES (\'${req.body.username}\', \'${req.body.password}\')`, function (err, rows, fields) {
         if (err) throw err
@@ -39,7 +68,7 @@ router.post('/user', function (req, res) {
     res.sendStatus(200)
 })
 
-router.get('/users', function (req, res) {
+router.get('/users', auth, function (req, res) {
     const query = 'SELECT * FROM users'
     connection.query(query, (err, table) => {
         if (err){
@@ -54,7 +83,7 @@ router.get('/users', function (req, res) {
     })
 })
 
-router.delete('/user/:id', function(req, res){
+router.delete('/:id', auth, function(req, res){
     const query = `DELETE FROM users WHERE id=\'${req.params.id}\'`
     connection.query(query, (err, table) => {
         if (err){

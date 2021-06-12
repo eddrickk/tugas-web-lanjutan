@@ -26,7 +26,7 @@ router.get('/', function (req, res) {
     `)
 })
 
-router.post('/todo', function (req, res) {
+router.post('/', function (req, res) {
     console.log('Got body:', req.body)
     connection.query(`INSERT INTO item (description) VALUES (\'${req.body.description}\')`, function (err, rows, fields) {
         if (err) throw err
@@ -37,7 +37,7 @@ router.post('/todo', function (req, res) {
     res.sendStatus(200)
 })
 
-router.get('/todo', function (req, res) {
+router.get('/todos', function (req, res) {
     const query = 'SELECT * FROM item'
     connection.query(query, (err, table) => {
         if (err){
@@ -52,7 +52,7 @@ router.get('/todo', function (req, res) {
     })
 })
 
-router.delete('/todo/:id', function(req, res){
+router.delete('/:id', function(req, res){
     const query = `DELETE FROM item WHERE id=\'${req.params.id}\'`
     connection.query(query, (err, table) => {
         if (err){

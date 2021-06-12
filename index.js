@@ -1,6 +1,9 @@
 const express = require('express')
 var mysql = require('mysql')
 var cors = require('cors')
+const routerUser = require('./routers/users.js')
+const routerTodo = require('./routers/todos.js')
+const auth = require('./middleware/auth.js')
 
 const corsOptions ={
     origin:'*',
@@ -15,12 +18,11 @@ app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded())
 
-const routerUser = require('./routers/users.js')
-const routerTodo = require('./routers/todos.js')
 
-app.use(routerTodo)
 
-app.use(routerUser)
+app.use('/todo', auth, routerTodo)
+
+app.use('/user', routerUser)
 
 app.listen(3000, () => {
     console.log('server jalan di port 3000')
