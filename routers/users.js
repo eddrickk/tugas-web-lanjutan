@@ -83,7 +83,21 @@ router.get('/users', auth, function (req, res) {
     })
 })
 
-router.delete('/:id', auth, function(req, res){
+router.delete('/:id', auth, (req, res, next) => {
+    const query = `SELECT * FROM users`
+    connection.query(query, (err, table) => {
+        if (err){
+            console.error(err)
+            return
+        }
+        if (table.length > 1){
+            next()
+        }
+        else{
+            res.sendStatus(401)
+        }
+    })
+}, function(req, res){
     const query = `DELETE FROM users WHERE id=\'${req.params.id}\'`
     connection.query(query, (err, table) => {
         if (err){
