@@ -57,6 +57,20 @@ router.post('/', (req, res, next) => {
             next()
         }
     })
+}, (req, res, next) => {
+    const query = `SELECT * FROM users WHERE username=\'${req.body.username}\'`
+    connection.query(query, (err, table) => {
+        if (err){
+            console.error(err)
+            return
+        }
+        if (table.length > 0){
+            res.sendStatus(401)
+        }
+        else{
+            next()
+        }
+    })
 }, (req, res) => {
     console.log('Got body:', req.body)
     connection.query(`INSERT INTO users (username, password) VALUES (\'${req.body.username}\', \'${req.body.password}\')`, function (err, rows, fields) {
