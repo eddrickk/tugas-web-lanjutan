@@ -2,6 +2,8 @@ const express = require('express')
 var mysql = require('mysql')
 const router = express.Router()
 const auth = require('../middleware/auth.js')
+const bcrypt = require('bcrypt')
+const saltRounds = 10
 
 router.use(express.json())
 router.use(express.urlencoded())
@@ -71,9 +73,10 @@ router.post('/', (req, res, next) => {
             next()
         }
     })
-}, (req, res) => {
+}, async (req, res) => {
+    const hash = await bcrypt.hashSync(req.body.password, saltRounds)
     console.log('Got body:', req.body)
-    connection.query(`INSERT INTO users (username, password) VALUES (\'${req.body.username}\', \'${req.body.password}\')`, function (err, rows, fields) {
+    connection.query(`INSERT INTO users (username, password) VALUES (\'${req.body.username}\', \'${hash}\')`, function (err, rows, fields) {
         if (err) throw err
       
         console.log('Data insert successful')
